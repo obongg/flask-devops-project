@@ -16,3 +16,40 @@
     executable: pip3
   become: true
   when: ansible_os_family == "RedHat"
+
+- name: Copy Flask app package to app servers
+  copy:
+    src: build/flask-app.tar.gz
+    dest: /home/ec2-user/flask-app.tar.gz
+  become: true
+
+- name: Create app directory
+  file:
+    path: /home/ec2-user/flask-app
+    state: directory
+  become: true
+
+- name: Extract Flask app archive
+  unarchive:
+    src: /home/ec2-user/flask-app.tar.gz
+    dest: /home/ec2-user/flask-app
+    remote_src: yes
+  become: true
+
+- name: Install requirements.txt
+  pip:
+    requirements: /home/ec2-user/flask-app/requirements.txt
+    executable: pip3
+  become: true
+
+# Optional: Run Flask app (if you want)
+- name: Run Flask app (background)
+  shell: nohup flask --app /home/ec2-user/flask-app/app.py run --host=0.0.0.0 --port=5000 &
+  args:
+    chdir: /home/ec2-user/flask-app
+  environment:
+    FLASK_APP: app.py
+    PATH: /usr/local/bin:/usr/bin:/bin
+  async: 10
+  poll: 0
+  become: true
