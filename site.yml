@@ -3,5 +3,5 @@
   hosts: app_ec2s
   become: true
   roles:
-    - python_flask
+    - python-flask
     - postgresql
