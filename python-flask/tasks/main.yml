@@ -19,8 +19,8 @@
 
 - name: Copy Flask app package to app servers
   copy:
-    src: /home/ec2-user/flask-devops-project/build/flask-app.tar.gz
-    dest: /home/ec2-user/flask-app.tar.gz
+    src: "{{ lookup('env', 'WORKSPACE') }}/build/flask-app.tar.gz"
+    dest: /tmp/flask-app.tar.gz
   become: true
 
 - name: Create app directory
