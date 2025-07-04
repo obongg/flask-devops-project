@@ -42,14 +42,33 @@
     executable: pip3
   become: true
 
-# Optional: Run Flask app (if you want)
-- name: Run Flask app (background)
-  shell: nohup flask --app /home/ec2-user/flask-app/app.py run --host=0.0.0.0 --port=5000 &
-  args:
-    chdir: /home/ec2-user/flask-app
-  environment:
-    FLASK_APP: app.py
-    PATH: /usr/local/bin:/usr/bin:/bin
-  async: 10
-  poll: 0
+- name: Create systemd service file for Flask app
+  copy:
+    dest: /etc/systemd/system/flask-app.service
+    content: |
+      [Unit]
+      Description=Flask App
+      After=network.target
+
+      [Service]
+      User=ec2-user
+      WorkingDirectory=/home/ec2-user/flask-app
+      Environment=FLASK_APP=app.py
+      ExecStart=/usr/bin/python3 -m flask run --host=0.0.0.0 --port=5000
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: Reload systemd daemon to recognize new service
+  systemd:
+    daemon_reload: yes
+  become: true
+
+- name: Enable and start the Flask app service
+  systemd:
+    name: flask-app
+    enabled: yes
+    state: started
   become: true
