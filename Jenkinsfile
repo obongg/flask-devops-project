@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'u1' }  
+    agent { label 'u1' }
 
     environment {
         APP_ARCHIVE = 'build/flask-app.tar.gz'
@@ -8,18 +8,22 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo 'Cloning repository...'
+                echo '📥 Cloning repository...'
                 checkout scm
             }
         }
 
         stage('Package Flask App') {
             steps {
-                echo 'Running packaging script...'
+                echo '📦 Packaging Flask app...'
                 sh '''
                     chmod +x scripts/package.sh
                     ./scripts/package.sh
                 '''
+
+                echo '📂 Archiving build artifact...'
+                archiveArtifacts artifacts: "${APP_ARCHIVE}", fingerprint: true
+                stash includes: "${APP_ARCHIVE}", name: 'flask-artifact'
             }
         }
 
@@ -27,9 +31,11 @@ pipeline {
             steps {
                 script {
                     if (!fileExists(env.APP_ARCHIVE)) {
+                        echo '🛑 Artifact not found. Showing directory contents for debugging:'
+                        sh 'ls -R'
                         error "Packaging failed! ${env.APP_ARCHIVE} not found."
                     } else {
-                        echo "Packaging succeeded: ${env.APP_ARCHIVE} exists."
+                        echo "✅ Packaging succeeded: ${env.APP_ARCHIVE} exists."
                     }
                 }
             }
@@ -37,7 +43,10 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                echo 'Running Ansible playbook...'
+                echo '📦 Unstashing build artifact before deployment...'
+                unstash 'flask-artifact'
+
+                echo '🚀 Running Ansible playbook...'
                 sh '''
                     ansible-playbook -i ansible/hosts.ini ansible/site.yml
                 '''
@@ -47,7 +56,7 @@ pipeline {
 
     post {
         success {
-            echo '🚀 Deployment complete!'
+            echo '✅ Deployment complete!'
         }
         failure {
             echo '❌ Deployment failed.'
