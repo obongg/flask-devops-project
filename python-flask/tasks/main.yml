@@ -19,7 +19,7 @@
 
 - name: Copy Flask app package to app servers
   copy:
-    src: build/flask-app.tar.gz
+    src: flask-app.tar.gz
     dest: /home/ec2-user/flask-app.tar.gz
   become: true
 
