@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Flask DevOps Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e40af);
+        color: #e2e8f0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      h1 {
+        font-size: 3em;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #60a5fa;
+      }
+
+      .card {
+        background-color: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(8px);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        border: 1px solid #334155;
+      }
+
+      .card p {
+        font-size: 1.2em;
+        color: #cbd5e1;
+        margin-bottom: 15px;
+      }
+
+      .tag {
+        margin-top: 20px;
+        display: inline-block;
+        background-color: #14b8a6; /* Tech teal */
+        padding: 10px 20px;
+        border-radius: 20px;
+        color: #000;
+        font-weight: bold;
+      }
+
+      .footer {
+        margin-top: 60px;
+        font-size: 1em;
+        color: #a5b4fc; /* Soft violet */
+        text-shadow: 0 0 4px #6366f1;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 Flask DevOps App</h1>
+
+    <div class="card">
+      <p>You are almost a DevOps Engineer! 🎯</p>
+      <p>
+        This Flask app was automatically deployed to AWS EC2 using Jenkins,
+        Ansible, and a CI/CD pipeline.
+      </p>
+      <div class="tag">Live on Port 5000</div>
+    </div>
+
+    <div class="footer">It's {{ year }} and you're still glowing 💻✨</div>
+  </body>
+</html>
