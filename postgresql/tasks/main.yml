@@ -1,2 +1,47 @@
 ---
 # tasks file for postgresql
+
+- name: Install PostgreSQL server
+  yum:
+    name: postgresql-server
+    state: present
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Initialize PostgreSQL DB
+  command: /usr/bin/postgresql-setup initdb
+  args:
+    creates: /var/lib/pgsql/data/pg_hba.conf
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Start and enable PostgreSQL service
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Set PostgreSQL to accept remote connections
+  lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: '^#?listen_addresses\s*='
+    line: "listen_addresses = '*'"
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Allow all connections in pg_hba.conf (DEV ONLY)
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    line: "host all all 0.0.0.0/0 trust"
+    create: yes
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Restart PostgreSQL to apply config changes
+  service:
+    name: postgresql
+    state: restarted
+  become: true
+  when: ansible_os_family == "RedHat"

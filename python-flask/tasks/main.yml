@@ -1,2 +1,18 @@
 ---
 # tasks file for python-flask
+
+- name: Install Python 3 and pip on CentOS
+  yum:
+    name:
+      - python3
+      - python3-pip
+    state: present
+  become: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install Flask via pip3
+  pip:
+    name: flask
+    executable: pip3
+  become: true
+  when: ansible_os_family == "RedHat"

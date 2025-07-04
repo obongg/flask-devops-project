@@ -1,0 +1,7 @@
+---
+- name: Configure Flask app and PostgreSQL on app servers
+  hosts: app_ec2s
+  become: true
+  roles:
+    - python_flask
+    - postgresql
